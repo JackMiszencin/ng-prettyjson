@@ -12,6 +12,7 @@ angular.module('ngPrettyJson', [])
     scope: {
       json: '=',
       prettyJson: '=',
+      settings: '=',
       onEdit: '&'
     },
     template: '<div></div>',
@@ -21,7 +22,7 @@ angular.module('ngPrettyJson', [])
 
       scope.id = attrs.id || 'prettyjson';
 
-      scope.editActivated = false;
+      scope.settings = (scope.settings || {});
       scope.edition = attrs.edition;
       scope.aceEditor = window.ace !== undefined;    
 
@@ -55,12 +56,12 @@ angular.module('ngPrettyJson', [])
         if (angular.isObject(newValue) && isDefined(newValue.json)) {
           objWatch();
           scope.$watch(exp + '.json', function (newValue) {
-            if (!scope.editActivated) highlight(newValue);
+            if (!scope.settings.editActivated) highlight(newValue);
             currentValue = newValue;
           }, true);
         }
         else {                      
-          if (!scope.editActivated) highlight(newValue);            
+          if (!scope.settings.editActivated) highlight(newValue);            
           currentValue = newValue;
         }
         if (editor) {
@@ -89,7 +90,7 @@ angular.module('ngPrettyJson', [])
           return;
         }
 
-        if (!scope.editActivated) {     
+        if (!scope.settings.editActivated) {     
           editor = ace.edit(scope.id);
           editor.setAutoScrollEditorIntoView(true);    
           editor.setOptions({maxLines: Infinity});
@@ -100,7 +101,7 @@ angular.module('ngPrettyJson', [])
           if (editor) { document.getElementById(scope.id).env = null; }
           highlight(currentValue);
         }
-        scope.editActivated = !scope.editActivated;
+        scope.settings.editActivated = !scope.settings.editActivated;
       };
 
       scope.update = function() {
