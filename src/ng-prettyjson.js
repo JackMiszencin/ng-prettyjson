@@ -13,6 +13,7 @@ angular.module('ngPrettyJson', [])
       json: '=',
       prettyJson: '=',
       settings: '=',
+      triggers: '=',
       onEdit: '&'
     },
     template: '<div></div>',
@@ -23,6 +24,7 @@ angular.module('ngPrettyJson', [])
       scope.id = attrs.id || 'prettyjson';
 
       scope.settings = (scope.settings || {});
+      scope.triggers = (scope.triggers || {});
       scope.edition = attrs.edition;
       scope.aceEditor = window.ace !== undefined;    
 
@@ -103,7 +105,8 @@ angular.module('ngPrettyJson', [])
         }
         scope.settings.editActivated = !scope.settings.editActivated;
       };
-
+      // Allows parent scope to access edit function
+      scope.triggers.edit = scope.edit;
       scope.update = function() {
         scope[exp] = currentValue;
         scope.$emit('json-updated', currentValue);
