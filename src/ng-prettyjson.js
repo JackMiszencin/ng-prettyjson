@@ -2,12 +2,12 @@
 'use strict';
 
 angular.module('ngPrettyJson', [])
-.directive('prettyJson', ['$compile', '$templateCache', 'ngPrettyJsonFunctions', 
+.directive('prettyJson', ['$compile', '$templateCache', 'ngPrettyJsonFunctions',
   function (compile, templateCache, ngPrettyJsonFunctions) {
 
   var isDefined = angular.isDefined;
 
-  return {    
+  return {
     restrict: 'AE',
     scope: {
       json: '=',
@@ -17,7 +17,7 @@ angular.module('ngPrettyJson', [])
       onEdit: '&'
     },
     template: '<div></div>',
-    replace: true,      
+    replace: true,
     link: function (scope, elm, attrs) {
       var currentValue = {}, editor = null, clonedElement = null;
 
@@ -26,13 +26,14 @@ angular.module('ngPrettyJson', [])
       scope.settings = (scope.settings || {});
       scope.triggers = (scope.triggers || {});
       scope.edition = attrs.edition;
-      scope.aceEditor = window.ace !== undefined;    
+      scope.aceEditor = window.ace !== undefined;
 
+      scope.showEditButton = isDefined(scope.settings.showEditButton) ? scope.settings.showEditButton : true;
       // compile template
-      var e = compile(templateCache.get('ng-prettyjson/ng-prettyjson-panel.tmpl.html'))(scope, function(clonedElement, scope) {          
-        scope.tmplElt = clonedElement;        
+      var e = compile(templateCache.get('ng-prettyjson/ng-prettyjson-panel.tmpl.html'))(scope, function(clonedElement, scope) {
+        scope.tmplElt = clonedElement;
       });
-      
+
       elm.removeAttr("id");
       elm.append(e);
 
@@ -46,7 +47,7 @@ angular.module('ngPrettyJson', [])
         .replace(/\}/g, "<span class='sep'>}</span>")
         .replace(/\[/g, "<span class='sep'>[</span>")
         .replace(/\]/g, "<span class='sep'>]</span>")
-        .replace(/\,/g, "<span class='sep'>,</span>");                        
+        .replace(/\,/g, "<span class='sep'>,</span>");
         return isDefined(value) ? scope.tmplElt.find('pre').html(html) : scope.tmplElt.find('pre').empty();
       },
       objWatch;
@@ -62,8 +63,8 @@ angular.module('ngPrettyJson', [])
             currentValue = newValue;
           }, true);
         }
-        else {                      
-          if (!scope.settings.editActivated) highlight(newValue);            
+        else {
+          if (!scope.settings.editActivated) highlight(newValue);
           currentValue = newValue;
         }
         if (editor) {
@@ -74,30 +75,30 @@ angular.module('ngPrettyJson', [])
         }
       }, true);
 
-      var editChanges = function(e) {                    
+      var editChanges = function(e) {
         try {
           currentValue = JSON.parse(editor.getValue());
           scope.parsable = true;
         }
-        catch (error) {scope.parsable = false;}  
+        catch (error) {scope.parsable = false;}
 
         // trigger update
         scope.$apply(function () {});
       };
 
-      scope.edit = function() { 
+      scope.edit = function() {
         if (!scope.aceEditor) {
           if (console)
             console.log('\'ace lib is missing\'');
           return;
         }
 
-        if (!scope.settings.editActivated) {     
+        if (!scope.settings.editActivated) {
           editor = ace.edit(scope.id);
-          editor.setAutoScrollEditorIntoView(true);    
+          editor.setAutoScrollEditorIntoView(true);
           editor.setOptions({maxLines: Infinity});
-          editor.on('change', editChanges);                        
-          editor.getSession().setMode("ace/mode/json");                        
+          editor.on('change', editChanges);
+          editor.getSession().setMode("ace/mode/json");
         }
         else {
           if (editor) { document.getElementById(scope.id).env = null; }
@@ -115,7 +116,7 @@ angular.module('ngPrettyJson', [])
         this.edit();
       };
 
-      
+
     }
   };
 }])
