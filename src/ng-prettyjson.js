@@ -115,7 +115,7 @@ angular.module('ngPrettyJson', [])
           scope.onEdit({newJson: currentValue});
         this.edit();
       };
-
+      scope.triggers.update = scope.update;
 
     }
   };
